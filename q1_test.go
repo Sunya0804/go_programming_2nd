@@ -27,8 +27,8 @@ func assertEqual(t *testing.T, answer, expected []WordCount) {
 }
 
 func TestSimple(t *testing.T) {
-	answer1 := topWords("simple.txt", 4, 0)
-	answer2 := topWords("simple.txt", 5, 4)
+	answer1 := TopWords("simple.txt", 4, 0)
+	answer2 := TopWords("simple.txt", 5, 4)
 	expected1 := []WordCount{
 		{"hello", 5},
 		{"you", 3},
@@ -47,7 +47,7 @@ func TestSimple(t *testing.T) {
 }
 
 func TestDeclarationOfIndependence(t *testing.T) {
-	answer := topWords("declaration_of_independence.txt", 5, 6)
+	answer := TopWords("declaration_of_independence.txt", 5, 6)
 	expected := []WordCount{
 		{"people", 10},
 		{"states", 8},
