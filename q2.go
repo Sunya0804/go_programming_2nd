@@ -3,6 +3,7 @@ package ds_hw_0
 import (
 	"bufio"
 	"io"
+	"os"
 	"strconv"
 )
 
@@ -12,6 +13,11 @@ import (
 func sumWorker(nums chan int, out chan int) {
 	// TODO: implement me
 	// HINT: use for loop over `nums`
+	tempSum := 0
+	for num := range nums {
+		tempSum += num
+	}
+	out <- tempSum
 }
 
 // Read integers from the file `fileName` and return sum of all values.
@@ -23,7 +29,45 @@ func sum(num int, fileName string) int {
 	// TODO: implement me
 	// HINT: use `readInts` and `sumWorkers`
 	// HINT: used buffered channels for splitting numbers between workers
-	return 0
+
+	// Open file
+	file, err := os.Open(fileName)
+	checkError(err)
+	defer file.Close()
+
+	// Read integers from file
+	ints, err := readInts(file)
+	checkError(err)
+
+	// Create buffered channel
+	intsChan := make(chan int, len(ints))
+
+	// Send integers to channel
+	for _, num := range ints {
+		intsChan <- num
+	}
+
+	// Create buffered channel
+	sumChan := make(chan int, num)
+
+	// Create workers
+	for i := 0; i < num; i++ {
+		go sumWorker(intsChan, sumChan)
+	}
+
+	// Close channel
+	close(intsChan)
+
+	// Sum integers
+	sum := 0
+	for i := 0; i < num; i++ {
+		sum += <-sumChan
+	}
+
+	// Close channel
+	close(sumChan)
+
+	return sum
 }
 
 // Read a list of integers separated by whitespace from `r`.
